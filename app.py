@@ -49,7 +49,6 @@ def predict():
     # print (content['data'])
     prediction = model_fraud.predict(np.array(json_normalize(content)))
     output = prediction[0]
-
     print(output)
     return "done"
 
