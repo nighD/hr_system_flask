@@ -1,4 +1,5 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request, url_for
+import os
 import json
 import plotly
 import xlrd
@@ -22,7 +23,9 @@ from pandas.io.json import json_normalize
 plotly.tools.set_credentials_file(username='nightD', api_key='0oUTeVklfkuokQa0s7mM')
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Load data
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 df_sourcefile = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/WA_Fn-UseC_-HR-Employee-Attrition.xlsx', sheet_name=0)
 df_HR = df_sourcefile.copy()
 
@@ -37,11 +40,95 @@ unseen_target_attrition = df_attrition_predict_target.copy()
 
 unseen_fraud = df_fraud_predict.copy()
 unseen_target_fraud = df_fraud_predict_target.copy()
-
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Load the model
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 model_attrition = pickle.load(open('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/model/attrition.pkl','rb'))
 model_fraud = pickle.load(open('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/model/fraud.pkl','rb'))
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Get Unseen Data
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/unseen_data_attrition')
+def get_attrition_unseen_data():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Attrition.json")
+    data = json.load(open(json_url))
+    return json.dumps(data)
 
+@app.route('/unseen_data_fraud')
+def get_fraud_unseen_data():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Fraud.json")
+    data = json.load(open(json_url))
+    return json.dumps(data)
+
+@app.route('/unseen_target_attrition')
+def get_attrition_unseen_target():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Attrition.json")
+    data = json.load(open(json_url))
+    return json.dumps(data)
+
+@app.route('/unseen_target_fraud')
+def get_fraud_unseen_target():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Fraud.json")
+    data = json.load(open(json_url))
+    return json.dumps(data)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Find Unseen Data By ID
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+@app.route('/find_unseen_data_attrition/<id>')
+def find_attrition_unseen_data(id):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Attrition.json")
+    data = json.load(open(json_url))
+    if RepresentsInt(id):
+        return json.dumps(data[int(id)])
+    else :
+        return "Not a Integer"
+
+@app.route('/find_unseen_data_fraud/<id>')
+def find_fraud_unseen_data(id):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Fraud.json")
+    data = json.load(open(json_url))
+    if RepresentsInt(id):
+        return json.dumps(data[int(id)])
+    else :
+        return "Not a Integer"
+
+@app.route('/find_unseen_target_attrition/<id>')
+def find_attrition_unseen_target(id):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Attrition.json")
+    data = json.load(open(json_url))
+    if RepresentsInt(id):
+        return json.dumps(data[int(id)])
+    else :
+        return "Not a Integer"
+
+@app.route('/find_unseen_target_fraud/<id>')
+def find_fraud_unseen_target(id):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Fraud.json")
+    data = json.load(open(json_url))
+    if RepresentsInt(id):
+        return json.dumps(data[int(id)])
+    else :
+        return "Not a Integer"
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Predict
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/predict',methods=['POST'])
 def predict():
     print (request.is_json)
@@ -51,7 +138,10 @@ def predict():
     output = prediction[0]
     print(output)
     return "done"
-
+    
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Get Columns Name and All data
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/get_columns_name')
 def get_columns():
     columns = np.array(df_HR.columns).tolist()
@@ -68,8 +158,11 @@ def get_datas():
             arrayRes[columns[key]]=element
 
         final.append(arrayRes)
-
     return json.dumps(final)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Data Visualization (Distribution With Target)
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 @app.route('/age_distribution')
 def data_analysis_age():
     xaxis=np.arange(15, 65, 5)
@@ -728,6 +821,11 @@ def data_analysis_performance_rating():
     fig = go.Figure(data=data,layout=layout)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
+
+
+
+
+
 
 
 
