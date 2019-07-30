@@ -48,6 +48,13 @@ model_fraud = pickle.load(open('/Users/mac/Desktop/Night/RMIT VietNam After Mel/
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Get Unseen Data
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/unseen_data')
+def get_unseen_data():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "DataUnseen.json")
+    data = json.load(open(json_url))
+    return json.dumps(data)
+
 @app.route('/unseen_data_attrition')
 def get_attrition_unseen_data():
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
@@ -86,12 +93,36 @@ def RepresentsInt(s):
     except ValueError:
         return False
 
+def CheckRange(s):
+    try:
+        a = int(s)
+        if 0 < a and a < 69:
+            return True
+        else :
+            return False
+    except:
+        return False
+        
+@app.route('/find_unseen_data/<id>')
+def find_unseen_data(id):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "DataUnseen.json")
+    data = json.load(open(json_url))
+    if RepresentsInt(id) :
+        if CheckRange(id):
+            return json.dumps(data[int(id)])
+        else : 
+            return "Out of Range"
+    else :
+        return "Not a Integer"
+
+
 @app.route('/find_unseen_data_attrition/<id>')
 def find_attrition_unseen_data(id):
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Attrition.json")
     data = json.load(open(json_url))
-    if RepresentsInt(id):
+    if RepresentsInt(id) and CheckRange(id):
         return json.dumps(data[int(id)])
     else :
         return "Not a Integer"
@@ -101,7 +132,7 @@ def find_fraud_unseen_data(id):
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Fraud.json")
     data = json.load(open(json_url))
-    if RepresentsInt(id):
+    if RepresentsInt(id) and CheckRange(id):
         return json.dumps(data[int(id)])
     else :
         return "Not a Integer"
@@ -111,7 +142,7 @@ def find_attrition_unseen_target(id):
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Attrition.json")
     data = json.load(open(json_url))
-    if RepresentsInt(id):
+    if RepresentsInt(id) and CheckRange(id):
         return json.dumps(data[int(id)])
     else :
         return "Not a Integer"
@@ -121,7 +152,7 @@ def find_fraud_unseen_target(id):
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Unseen_Target_Fraud.json")
     data = json.load(open(json_url))
-    if RepresentsInt(id):
+    if RepresentsInt(id) and CheckRange(id):
         return json.dumps(data[int(id)])
     else :
         return "Not a Integer"
@@ -133,11 +164,51 @@ def find_fraud_unseen_target(id):
 def predict():
     print (request.is_json)
     content = request.get_json(force=True)
-    # print (content['data'])
     prediction = model_fraud.predict(np.array(json_normalize(content)))
     output = prediction[0]
     print(output)
     return "done"
+    
+@app.route('/predict_attrition/<id>')
+def predict_attrition(id):
+    if RepresentsInt(id) :
+        if CheckRange(id):
+            data_actual_attrition = unseen_attrition.iloc[int(id),:]
+            actual_result_attrition = unseen_target_attrition.iloc[int(id),:]
+            prediction_attrition = model_attrition.predict(np.array(data_actual_attrition).reshape(1, -1))
+            output_attrition = prediction_attrition[0]
+            x = {
+                "Actual Result":int(np.array(actual_result_attrition)),
+                "Predict Result":int(output_attrition)
+            }
+            y = json.dumps(x)
+
+            return y
+        else : 
+            return "Out of Range"
+    else :
+        return "Not a Integer"
+
+@app.route('/predict_fraud/<id>')
+def predict_fraud(id):
+    if RepresentsInt(id) :
+        if CheckRange(id):
+            data_actual_fraud = unseen_fraud.iloc[int(id),:]
+            actual_result_fraud = unseen_target_fraud.iloc[int(id),:]
+            prediction_fraud = model_fraud.predict(np.array(data_actual_fraud).reshape(1, -1))
+            output_fraud = prediction_fraud[0]
+            x = {
+                "Actual Result":int(np.array(actual_result_fraud)),
+                "Predict Result":int(output_fraud)
+            }
+            y = json.dumps(x)
+
+            return y
+        else : 
+            return "Out of Range"
+    else :
+        return "Not a Integer"
+    
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Get Columns Name and All data
