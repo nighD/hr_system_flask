@@ -209,7 +209,41 @@ def predict_fraud(id):
     else :
         return "Not a Integer"
     
-    
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Comparision Result
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/comparision_target_attrition')
+def compare_target_attrition():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Attrition.json") 
+    # print(json_normalize(content))
+    data = json.load(open(json_url))
+    attrition_compare = json_normalize(data)
+    content = attrition_compare['Actual Result'].value_counts()
+    target = np.array(content.index)
+    frequency = np.array(content.values)
+    dic ={}
+    dic['target']= target.tolist()
+    dic['frequency'] = frequency.tolist()
+    back = json.dumps(dic)
+    return back
+
+@app.route('/comparision_target_fraud')
+def compare_target_fraud():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Fraud.json")
+    data = json.load(open(json_url))
+    fraud_compare = json_normalize(data)
+    content = fraud_compare['Actual Result'].value_counts()
+    target = np.array(content.index)
+    frequency = np.array(content.values)
+    dic ={}
+    dic['target']= target.tolist()
+    dic['frequency'] = frequency.tolist()
+    back = json.dumps(dic)
+    return back
+
+
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Get Columns Name and All data
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
