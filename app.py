@@ -210,9 +210,9 @@ def predict_fraud(id):
         return "Not a Integer"
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Comparision Result
+# Comparison Result
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-@app.route('/comparision_target_attrition')
+@app.route('/comparison_target_attrition')
 def compare_target_attrition():
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Attrition.json") 
@@ -228,10 +228,63 @@ def compare_target_attrition():
     back = json.dumps(dic)
     return back
 
-@app.route('/comparision_target_fraud')
+@app.route('/result_attrition')
+def result_attrition():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Attrition.json") 
+    # print(json_normalize(content))
+    data = json.load(open(json_url))
+    attrition_compare = json_normalize(data)
+    content = attrition_compare['Compare Result'].value_counts()
+    result = (content[0]/69)*100
+    return str(result)
+
+@app.route('/result_fraud')
+def result_fraud():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Fraud.json") 
+    # print(json_normalize(content))
+    data = json.load(open(json_url))
+    attrition_compare = json_normalize(data)
+    content = attrition_compare['Compare Result'].value_counts()
+    result = (content[0]/69)*100
+    return str(result)
+
+@app.route('/comparison_predict_attrition')
+def compare_predict_attrition():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Predict_Attrition.json") 
+    # print(json_normalize(content))
+    data = json.load(open(json_url))
+    attrition_compare = json_normalize(data)
+    content = attrition_compare['Actual Result'].value_counts()
+    target = np.array(content.index)
+    frequency = np.array(content.values)
+    dic ={}
+    dic['target']= target.tolist()
+    dic['frequency'] = frequency.tolist()
+    back = json.dumps(dic)
+    return back
+
+@app.route('/comparison_target_fraud')
 def compare_target_fraud():
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Fraud.json")
+    data = json.load(open(json_url))
+    fraud_compare = json_normalize(data)
+    content = fraud_compare['Actual Result'].value_counts()
+    target = np.array(content.index)
+    frequency = np.array(content.values)
+    dic ={}
+    dic['target']= target.tolist()
+    dic['frequency'] = frequency.tolist()
+    back = json.dumps(dic)
+    return back
+
+@app.route('/comparison_predict_fraud')
+def compare_predict_fraud():
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "JSON_File", "Comparision_Predict_Fraud.json")
     data = json.load(open(json_url))
     fraud_compare = json_normalize(data)
     content = fraud_compare['Actual Result'].value_counts()
