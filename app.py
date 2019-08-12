@@ -22,7 +22,10 @@ import pickle
 from pandas.io.json import json_normalize
 plotly.tools.set_credentials_file(username='nightD', api_key='Pdjo1Xzroudth28HwvWs')
 app = Flask(__name__)
+
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Load data
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -979,13 +982,3 @@ def data_analysis_performance_rating():
     fig = go.Figure(data=data,layout=layout)
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
-
-
-
-
-
-
-
-
-
-    
