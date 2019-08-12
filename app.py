@@ -3,7 +3,7 @@ import os
 import json
 import plotly
 import xlrd
-import plotly.plotly as py
+import chart_studio.plotly as py
 import plotly.graph_objs as go
 import plotly.figure_factory as ff
 import numpy as np
