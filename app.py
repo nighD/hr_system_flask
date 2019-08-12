@@ -20,7 +20,7 @@ from flask import jsonify
 from flask_cors import CORS
 import pickle
 from pandas.io.json import json_normalize
-plotly.tools.set_credentials_file(username='nightD', api_key='0oUTeVklfkuokQa0s7mM')
+plotly.tools.set_credentials_file(username='nightD', api_key='Pdjo1Xzroudth28HwvWs')
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
