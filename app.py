@@ -26,14 +26,14 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Load data
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-df_sourcefile = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/WA_Fn-UseC_-HR-Employee-Attrition.xlsx', sheet_name=0)
+df_sourcefile = pd.read_excel('./data/WA_Fn-UseC_-HR-Employee-Attrition.xlsx', sheet_name=0)
 df_HR = df_sourcefile.copy()
 
-df_attrition_predict = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/unseen_attrition.xlsx', sheet_name=0)
-df_attrition_predict_target = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/target_unseen_attrition.xlsx', sheet_name=0)
+df_attrition_predict = pd.read_excel('./data/unseen_attrition.xlsx', sheet_name=0)
+df_attrition_predict_target = pd.read_excel('./data/target_unseen_attrition.xlsx', sheet_name=0)
 
-df_fraud_predict = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/unseen_fraud.xlsx', sheet_name=0)
-df_fraud_predict_target = pd.read_excel('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/data/target_unseen_fraud.xlsx', sheet_name=0)
+df_fraud_predict = pd.read_excel('./data/unseen_fraud.xlsx', sheet_name=0)
+df_fraud_predict_target = pd.read_excel('./data/target_unseen_fraud.xlsx', sheet_name=0)
 
 unseen_attrition = df_attrition_predict.copy()
 unseen_target_attrition = df_attrition_predict_target.copy()
@@ -43,8 +43,8 @@ unseen_target_fraud = df_fraud_predict_target.copy()
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Load the model
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-model_attrition = pickle.load(open('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/model/attrition.pkl','rb'))
-model_fraud = pickle.load(open('/Users/mac/Desktop/Night/RMIT VietNam After Mel/Sem 2/Capstone_Project_B/HR_Web_Based/test_flask/model/fraud.pkl','rb'))
+model_attrition = pickle.load(open('./model/attrition.pkl','rb'))
+model_fraud = pickle.load(open('./model/fraud.pkl','rb'))
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Get Unseen Data
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
